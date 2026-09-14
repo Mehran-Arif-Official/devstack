@@ -12,6 +12,7 @@ export default function App() {
         <TechnologiesSection />
       </main>
       <Footer />
+      <ToastContainer position="bottom-right" autoClose={2000} theme="light" />
     </div>
   );
 }

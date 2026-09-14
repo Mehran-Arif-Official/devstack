@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { toast } from "react-toastify";
 import { technologies } from "../data/technologies";
 import type { Technology } from "../types";
 import TechnologyCard from "./TechnologyCard";
@@ -8,19 +9,35 @@ export default function TechnologiesSection() {
   const [selected, setSelected] = useState<Technology[]>([]);
 
   const toggleTech = (tech: Technology) => {
+    const alreadySelected = selected.some((t) => t.id === tech.id);
+
     setSelected((prev) =>
-      prev.some((t) => t.id === tech.id)
-        ? prev.filter((t) => t.id !== tech.id)
-        : [...prev, tech]
+      alreadySelected ? prev.filter((t) => t.id !== tech.id) : [...prev, tech],
     );
+
+    if (alreadySelected) {
+      toast.info(`${tech.name} removed from your stack`);
+    } else {
+      toast.success(`${tech.name} added to your stack`);
+    }
   };
 
   const removeTech = (id: string) => {
+    const tech = selected.find((t) => t.id === id);
     setSelected((prev) => prev.filter((t) => t.id !== id));
+    if (tech) toast.info(`${tech.name} removed from your stack`);
+  };
+
+  const removeAll = () => {
+    if (selected.length > 0) toast.info("Stack cleared");
+    setSelected([]);
   };
 
   return (
-    <section id="technologies" className="max-w-[1400px] mx-auto px-6 lg:px-10 py-16">
+    <section
+      id="technologies"
+      className="max-w-[1400px] mx-auto px-6 lg:px-10 py-16"
+    >
       <h2 className="text-4xl font-extrabold text-ink">
         Explore the{" "}
         <span className="bg-gradient-to-r from-brandPink to-brandPurple bg-clip-text text-transparent">
@@ -46,7 +63,7 @@ export default function TechnologiesSection() {
         <StackSidebar
           selected={selected}
           onRemove={removeTech}
-          onRemoveAll={() => setSelected([])}
+          onRemoveAll={removeAll}
         />
       </div>
     </section>
